@@ -1,0 +1,17 @@
+name: build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: sudo xcode-select -s /Applications/Xcode_12.4.app
+      - name: Test
+        run: bazelisk test //test/...

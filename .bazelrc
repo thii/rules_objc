@@ -1,0 +1,6 @@
+# Disable the Swift compilation worker when running integration tests, since it
+# requires the protobuf dependency which is infeasible to get working on Bazel.
+build --define=RULES_SWIFT_BUILD_DUMMY_WORKER=1
+build --strategy=SwiftCompile=sandboxed
+
+test --nocheck_visibility
