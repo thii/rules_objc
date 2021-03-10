@@ -7,6 +7,7 @@ load(
 )
 
 # Verbatim imported from rules_apple, as that is not publicly loadable.
+# https://github.com/bazelbuild/rules_apple/blob/5b7b85c0123815993f27200931dec3c69a528605/apple/apple_binary.bzl#L26-L41
 def linker_flag_for_sdk_dylib(dylib):
     """Returns a linker flag suitable for linking the given `sdk_dylib` value.
 
