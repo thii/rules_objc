@@ -6,6 +6,24 @@ load(
     "CPP_LINK_STATIC_LIBRARY_ACTION_NAME",
 )
 
+# Verbatim imported from rules_apple, as that is not publicly loadable.
+def linker_flag_for_sdk_dylib(dylib):
+    """Returns a linker flag suitable for linking the given `sdk_dylib` value.
+
+    As does Bazel core, we strip a leading `lib` if it is present in the name
+    of the library.
+
+    Args:
+        dylib: The name of the library, as specified in the `sdk_dylib`
+            attribute.
+
+    Returns:
+        A linker flag used to link to the given library.
+    """
+    if dylib.startswith("lib"):
+        dylib = dylib[3:]
+    return "-l{}".format(dylib)
+
 def register_static_library_link_action(
         actions,
         cc_toolchain,

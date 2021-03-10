@@ -30,6 +30,7 @@ load(
 )
 load(
     ":linking.bzl",
+    "linker_flag_for_sdk_dylib",
     "register_static_library_link_action",
 )
 load(
@@ -56,8 +57,8 @@ def _objc_library_impl(ctx):
         targets = ctx.attr.cc_inputs,
         values = ctx.attr.linkopts,
     ) + [
-        "-l{}".format(library)
-        for library in ctx.attr.sdk_dylibs
+        linker_flag_for_sdk_dylib(dylib)
+        for dylib in ctx.attr.sdk_dylibs
     ] + [
         "-Wl,-framework,{}".format(framework)
         for framework in ctx.attr.sdk_frameworks
