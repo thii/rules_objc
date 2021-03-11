@@ -250,7 +250,7 @@ Enables Clang module support (via `-fmodules`).
 """,
         ),
         "hdrs": attr.label_list(
-            allow_files = HEADERS_FILE_TYPES,
+            allow_files = True,
         ),
         "includes": attr.string_list(
             doc = """\
