@@ -14,6 +14,7 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 http_archive(
     name = "rules_objc",
     sha256 = "<sha256>",
+    strip_prefix = "rules_objc-<commit>",
     urls = ["https://github.com/thii/rules_objc/archive/<commit>.zip"],
 )
 ```
