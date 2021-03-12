@@ -180,7 +180,6 @@ def _objc_library_impl(ctx):
 
     objc_provider = new_objc_provider(
         deps = ctx.attr.deps + ctx.attr.private_deps,
-        headers = ctx.files.hdrs,
         link_inputs = [output_file] + additional_inputs,
         linkopts = linkopts,
         module_map = ctx.file.module_map,

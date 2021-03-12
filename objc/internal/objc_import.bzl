@@ -81,7 +81,6 @@ def _objc_import_impl(ctx):
 
     objc_provider = new_objc_provider(
         deps = [],
-        headers = ctx.files.hdrs,
         link_inputs = ctx.files.archives + ctx.files.cc_inputs,
         linkopts = linkopts,
         module_map = None,

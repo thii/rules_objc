@@ -110,7 +110,6 @@ def compile(
 
 def new_objc_provider(
         deps,
-        headers,
         link_inputs,
         linkopts,
         module_map,
@@ -156,7 +155,6 @@ def new_objc_provider(
         order = "topological",
     )
 
-    objc_provider_args["header"] = depset(headers)
     if linkopts:
         objc_provider_args["linkopt"] = depset(
             direct = linkopts,
