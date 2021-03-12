@@ -1,5 +1,22 @@
 """Common utility definitions."""
 
+def collect_objc_libraries(deps):
+    """Returns a list of libraries referenced in the given `deps`'s `ObjcProvider`.
+
+    Args:
+        deps: The dependencies whose libraries should be returned.
+
+    Returns:
+        The list of libraries provided in `deps`'s `ObjcProvider`.
+    """
+    libraries = []
+
+    for x in deps:
+        if apple_common.Objc in x:
+            libraries.extend(x[apple_common.Objc].library.to_list())
+
+    return libraries
+
 def expand_locations_and_make_variables(ctx, attr, values, targets = []):
     """Expands the `$(location)` placeholders and Make variables in each of the given values.
 
