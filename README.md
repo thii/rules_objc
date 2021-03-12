@@ -43,7 +43,9 @@ from the native rules.
 
 ## Current status
 
+- Implemented: `objc_import`, `objc_library`.
 - Be able to build all Objective-C examples in `rules_apple`.
+- Does not interop with Swift, yet.
 
 ## Acknowledgments
 
