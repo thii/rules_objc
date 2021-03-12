@@ -46,6 +46,7 @@ def compile(
         cc_toolchain = cc_toolchain,
         feature_configuration = feature_configuration,
         output_file = object_file.path,
+        quote_include_directories = cc_info.compilation_context.quote_includes,
         source_file = src.path,
         user_compile_flags = ctx.fragments.cpp.copts + ctx.fragments.cpp.conlyopts + copts,
     )
@@ -68,8 +69,6 @@ def compile(
 
     args = ctx.actions.args()
     args.add("-arch", cpu)
-    args.add("-iquote", ".")
-    args.add("-iquote", ctx.bin_dir.path)
     args.add("-MD")
     args.add("-MF", dependency_file)
     args.add_all(cc_info.compilation_context.defines, format_each = "-D%s")

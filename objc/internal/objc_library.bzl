@@ -115,6 +115,7 @@ def _objc_library_impl(ctx):
         defines = depset(ctx.attr.defines),
         headers = depset(hdrs),
         includes = depset(ctx.attr.includes),
+        quote_includes = depset([".", ctx.bin_dir.path]),
     )
     linking_context = cc_common.create_linking_context(
         linker_inputs = depset([linker_input]),
