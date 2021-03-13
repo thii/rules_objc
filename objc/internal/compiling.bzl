@@ -122,7 +122,7 @@ def new_objc_provider(
         link_inputs: Additional linker input files that should be propagated to
             dependents.
         linkopts: Linker options that should be propagated to dependents.
-        module_map: The provided module map, if any.
+        module_map: The module map for this target, if any.
         static_archives: A list (typically of one element) of the static
             archives (`.a` files) containing the target's compiled code.
 

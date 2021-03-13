@@ -46,7 +46,6 @@ from the native rules.
 
 - Implemented: `apple_static_library`, `objc_import`, and `objc_library`.
 - Be able to build all Objective-C examples in `rules_apple`.
-- Does not interop with Swift, yet.
 
 ## Acknowledgments
 

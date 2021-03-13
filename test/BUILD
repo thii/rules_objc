@@ -13,5 +13,6 @@ build_test(
         "//examples/watchos/HelloWorld",
         "//test/targets_under_test/ios:apple_static_library_with_avoid_deps",
         "//test/targets_under_test/ios:lib_without_srcs",
+        "//test/targets_under_test/ios:swiftlib_depending_on_starlark_objclib",
     ],
 )

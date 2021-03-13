@@ -1,6 +1,14 @@
 """Implementation of the `objc_library` rule."""
 
 load(
+    "@build_bazel_rules_swift//swift/internal:compiling.bzl",
+    "derive_module_name"
+)
+load(
+    "@build_bazel_rules_swift//swift/internal:module_maps.bzl",
+    "write_module_map"
+)
+load(
     "@build_bazel_rules_swift//swift/internal:utils.bzl",
     "compact",
 )
@@ -36,6 +44,26 @@ load(
 
 def _objc_library_impl(ctx):
     cc_toolchain = find_cc_toolchain(ctx)
+
+    module_map_file = ctx.file.module_map
+    if not module_map_file and (
+        ctx.files.hdrs or ctx.files.textual_hdrs
+    ):
+        # The native rule declares this as 'ctx.label.name +
+        # ".modulemaps/module.modulemap' which can be problematic, since the
+        # $(RULEDIR) can be in include paths which causes the module map to
+        # be implicitly searchable
+        module_map_file = ctx.actions.declare_file(
+            ctx.label.name + ".objc.modulemap",
+        )
+        write_module_map(
+            actions = ctx.actions,
+            exported_module_ids = ["*"],
+            module_map_file = module_map_file,
+            module_name = derive_module_name(ctx.label),
+            public_headers = ctx.files.hdrs,
+            public_textual_headers = ctx.files.textual_hdrs,
+        )
 
     compilation_context = cc_common.create_compilation_context(
         defines = depset(ctx.attr.defines),
@@ -123,12 +151,13 @@ def _objc_library_impl(ctx):
             linker_inputs = depset([linker_input]),
         )
 
-        cc_info = CcInfo(
+        direct_cc_info = CcInfo(
             compilation_context = compilation_context,
             linking_context = linking_context,
         )
         cc_info = cc_common.merge_cc_infos(
-            cc_infos = [cc_info] + [
+            direct_cc_infos = [direct_cc_info],
+            cc_infos = [
                 dep[CcInfo]
                 for dep in ctx.attr.deps
             ],
@@ -185,20 +214,24 @@ def _objc_library_impl(ctx):
             deps = ctx.attr.deps + ctx.attr.private_deps,
             link_inputs = additional_inputs,
             linkopts = linkopts,
-            module_map = ctx.file.module_map,
+            module_map = module_map_file,
             static_archives = compact([library_to_link.static_library]),
         )
         providers.append(objc_provider)
     else:
-        cc_info = CcInfo(
+        direct_cc_info = CcInfo(
             compilation_context = compilation_context,
         )
         cc_info = cc_common.merge_cc_infos(
-            cc_infos = [cc_info] + [
+            direct_cc_infos = [direct_cc_info],
+            cc_infos = [
                 dep[CcInfo]
                 for dep in ctx.attr.deps
             ],
         )
+
+    if module_map_file:
+        outputs.append(module_map_file)
 
     providers.extend([
         cc_info,
