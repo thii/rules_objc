@@ -44,3 +44,8 @@ objc_library(
     name = "LowestLib",
     srcs = [":LowestLibSource"],
 )
+
+objc_library(
+    name = "lib_without_srcs",
+    data = ["//test/targets_under_test/resources:dummy_data"],
+)

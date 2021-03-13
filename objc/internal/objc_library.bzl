@@ -40,165 +40,183 @@ load(
 
 def _objc_library_impl(ctx):
     cc_toolchain = find_cc_toolchain(ctx)
-    additional_inputs = []
-    additional_inputs.extend(ctx.files.cc_inputs)
 
-    # These can't use additional_inputs since expand_locations needs targets,
-    # not files.
-    copts = expand_locations_and_make_variables(
-        attr = "copts",
-        ctx = ctx,
-        targets = ctx.attr.cc_inputs,
-        values = ctx.attr.copts,
-    )
-    linkopts = expand_locations_and_make_variables(
-        attr = "linkopts",
-        ctx = ctx,
-        targets = ctx.attr.cc_inputs,
-        values = ctx.attr.linkopts,
-    ) + [
-        linker_flag_for_sdk_dylib(dylib)
-        for dylib in ctx.attr.sdk_dylibs
-    ] + [
-        "-Wl,-framework,{}".format(framework)
-        for framework in ctx.attr.sdk_frameworks
-    ] + [
-        "-Wl,-weak_framework,{}".format(framework)
-        for framework in ctx.attr.weak_sdk_frameworks
-    ]
-
-    output_file = ctx.actions.declare_file("lib" + ctx.label.name + ".a")
-
-    apple_fragment = ctx.fragments.apple
-    cpu = apple_fragment.single_arch_cpu
-
-    extra_features = []
-    extra_features.extend(default_features())
-    extra_features.extend(
-        features_for_compilation_mode(ctx.var["COMPILATION_MODE"]),
-    )
-
-    object_files = []
-
-    hdrs = ctx.files.hdrs
-    srcs = ctx.files.srcs
-
-    compilation_extra_inputs = []
-    compilation_extra_inputs.extend(additional_inputs + hdrs)
-    for file in srcs:
-        _, extension = paths.split_extension(file.path)
-        if extension in HEADERS_FILE_TYPES:
-            compilation_extra_inputs.append(file)
-    if ctx.attr.pch:
-        compilation_extra_inputs.append(ctx.file.pch)
-
-    feature_configuration = cc_common.configure_features(
-        cc_toolchain = cc_toolchain,
-        ctx = ctx,
-        requested_features = ctx.features + extra_features,
-        unsupported_features = ctx.disabled_features,
-    )
-
-    library_to_link = cc_common.create_library_to_link(
-        actions = ctx.actions,
-        cc_toolchain = cc_toolchain,
-        feature_configuration = feature_configuration,
-        static_library = output_file,
-    )
-    linker_input = cc_common.create_linker_input(
-        additional_inputs = depset(additional_inputs),
-        libraries = depset([library_to_link]),
-        owner = ctx.label,
-        user_link_flags = depset(linkopts),
-    )
     compilation_context = cc_common.create_compilation_context(
         defines = depset(ctx.attr.defines),
-        headers = depset(hdrs),
+        headers = depset(ctx.files.hdrs),
         includes = depset(ctx.attr.includes),
         quote_includes = depset([".", ctx.bin_dir.path]),
     )
-    linking_context = cc_common.create_linking_context(
-        linker_inputs = depset([linker_input]),
-    )
 
-    cc_info = CcInfo(
-        compilation_context = compilation_context,
-        linking_context = linking_context,
-    )
-    cc_info = cc_common.merge_cc_infos(
-        cc_infos = [cc_info] + [
-            dep[CcInfo]
-            for dep in ctx.attr.deps
-        ],
-    )
+    if ctx.files.srcs or ctx.files.non_arc_srcs:
+        output_file = ctx.actions.declare_file("lib" + ctx.label.name + ".a")
+        outputs = [output_file]
+    else:
+        outputs = []
 
-    for src in srcs:
-        _, extension = paths.split_extension(src.path)
-        if extension in HEADERS_FILE_TYPES:
-            continue
-        object_file = compile(
-            additional_inputs = compilation_extra_inputs,
-            cc_info = cc_info,
-            cc_toolchain = cc_toolchain,
-            copts = copts,
-            cpu = cpu,
+    providers = []
+
+    if outputs:
+        additional_inputs = []
+        additional_inputs.extend(ctx.files.cc_inputs)
+
+        # These can't use additional_inputs since expand_locations needs
+        # targets, not files.
+        copts = expand_locations_and_make_variables(
+            attr = "copts",
             ctx = ctx,
-            enable_modules = ctx.attr.enable_modules,
-            feature_configuration = feature_configuration,
-            is_arc_src = True,
-            pch = ctx.file.pch,
-            src = src,
+            targets = ctx.attr.cc_inputs,
+            values = ctx.attr.copts,
         )
-        object_files.append(object_file)
-
-    for src in ctx.files.non_arc_srcs:
-        _, extension = paths.split_extension(src.path)
-        if extension in HEADERS_FILE_TYPES:
-            continue
-        object_file = compile(
-            additional_inputs = compilation_extra_inputs,
-            cc_info = cc_info,
-            cc_toolchain = cc_toolchain,
-            copts = copts,
-            cpu = cpu,
+        linkopts = expand_locations_and_make_variables(
+            attr = "linkopts",
             ctx = ctx,
-            enable_modules = ctx.attr.enable_modules,
-            feature_configuration = feature_configuration,
-            is_arc_src = False,
-            pch = ctx.file.pch,
-            src = src,
+            targets = ctx.attr.cc_inputs,
+            values = ctx.attr.linkopts,
+        ) + [
+            linker_flag_for_sdk_dylib(dylib)
+            for dylib in ctx.attr.sdk_dylibs
+        ] + [
+            "-Wl,-framework,{}".format(framework)
+            for framework in ctx.attr.sdk_frameworks
+        ] + [
+            "-Wl,-weak_framework,{}".format(framework)
+            for framework in ctx.attr.weak_sdk_frameworks
+        ]
+
+        apple_fragment = ctx.fragments.apple
+        cpu = apple_fragment.single_arch_cpu
+
+        extra_features = []
+        extra_features.extend(default_features())
+        extra_features.extend(
+            features_for_compilation_mode(ctx.var["COMPILATION_MODE"]),
         )
-        object_files.append(object_file)
 
-    register_static_library_link_action(
-        actions = ctx.actions,
-        cc_toolchain = cc_toolchain,
-        feature_configuration = feature_configuration,
-        objects = object_files,
-        output = output_file,
-        target_cpu = cpu,
-    )
+        object_files = []
 
-    objc_provider = new_objc_provider(
-        deps = ctx.attr.deps + ctx.attr.private_deps,
-        link_inputs = [output_file] + additional_inputs,
-        linkopts = linkopts,
-        module_map = ctx.file.module_map,
-        static_archives = compact([library_to_link.static_library]),
-    )
+        compilation_extra_inputs = []
+        compilation_extra_inputs.extend(additional_inputs + ctx.files.hdrs)
+        for file in ctx.files.srcs:
+            _, extension = paths.split_extension(file.path)
+            if extension in HEADERS_FILE_TYPES:
+                compilation_extra_inputs.append(file)
+        if ctx.attr.pch:
+            compilation_extra_inputs.append(ctx.file.pch)
 
-    return [
+        feature_configuration = cc_common.configure_features(
+            cc_toolchain = cc_toolchain,
+            ctx = ctx,
+            requested_features = ctx.features + extra_features,
+            unsupported_features = ctx.disabled_features,
+        )
+
+        library_to_link = cc_common.create_library_to_link(
+            actions = ctx.actions,
+            cc_toolchain = cc_toolchain,
+            feature_configuration = feature_configuration,
+            static_library = output_file,
+        )
+        linker_input = cc_common.create_linker_input(
+            additional_inputs = depset(additional_inputs),
+            libraries = depset([library_to_link]),
+            owner = ctx.label,
+            user_link_flags = depset(linkopts),
+        )
+        linking_context = cc_common.create_linking_context(
+            linker_inputs = depset([linker_input]),
+        )
+
+        cc_info = CcInfo(
+            compilation_context = compilation_context,
+            linking_context = linking_context,
+        )
+        cc_info = cc_common.merge_cc_infos(
+            cc_infos = [cc_info] + [
+                dep[CcInfo]
+                for dep in ctx.attr.deps
+            ],
+        )
+
+        for src in ctx.files.srcs:
+            _, extension = paths.split_extension(src.path)
+            if extension in HEADERS_FILE_TYPES:
+                continue
+            object_file = compile(
+                additional_inputs = compilation_extra_inputs,
+                cc_info = cc_info,
+                cc_toolchain = cc_toolchain,
+                copts = copts,
+                cpu = cpu,
+                ctx = ctx,
+                enable_modules = ctx.attr.enable_modules,
+                feature_configuration = feature_configuration,
+                is_arc_src = True,
+                pch = ctx.file.pch,
+                src = src,
+            )
+            object_files.append(object_file)
+
+        for src in ctx.files.non_arc_srcs:
+            _, extension = paths.split_extension(src.path)
+            if extension in HEADERS_FILE_TYPES:
+                continue
+            object_file = compile(
+                additional_inputs = compilation_extra_inputs,
+                cc_info = cc_info,
+                cc_toolchain = cc_toolchain,
+                copts = copts,
+                cpu = cpu,
+                ctx = ctx,
+                enable_modules = ctx.attr.enable_modules,
+                feature_configuration = feature_configuration,
+                is_arc_src = False,
+                pch = ctx.file.pch,
+                src = src,
+            )
+            object_files.append(object_file)
+
+        register_static_library_link_action(
+            actions = ctx.actions,
+            cc_toolchain = cc_toolchain,
+            feature_configuration = feature_configuration,
+            objects = object_files,
+            output = output_file,
+            target_cpu = cpu,
+        )
+
+        objc_provider = new_objc_provider(
+            deps = ctx.attr.deps + ctx.attr.private_deps,
+            link_inputs = additional_inputs,
+            linkopts = linkopts,
+            module_map = ctx.file.module_map,
+            static_archives = compact([library_to_link.static_library]),
+        )
+        providers.append(objc_provider)
+    else:
+        cc_info = CcInfo(
+            compilation_context = compilation_context,
+        )
+        cc_info = cc_common.merge_cc_infos(
+            cc_infos = [cc_info] + [
+                dep[CcInfo]
+                for dep in ctx.attr.deps
+            ],
+        )
+
+    providers.extend([
+        cc_info,
         DefaultInfo(
-            files = depset([output_file]),
+            files = depset(outputs),
             runfiles = ctx.runfiles(
                 collect_data = True,
                 collect_default = True,
                 files = ctx.files.data + ctx.files.runtime_deps,
             ),
         ),
-        cc_info,
-        objc_provider,
-    ]
+    ])
+
+    return providers
 
 objc_library = rule(
     implementation = _objc_library_impl,

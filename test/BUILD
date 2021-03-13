@@ -12,5 +12,6 @@ build_test(
         "//examples/tvos/HelloWorld",
         "//examples/watchos/HelloWorld",
         "//test/targets_under_test/ios:apple_static_library_with_avoid_deps",
+        "//test/targets_under_test/ios:lib_without_srcs",
     ],
 )
