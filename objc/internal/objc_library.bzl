@@ -215,6 +215,8 @@ def _objc_library_impl(ctx):
             link_inputs = additional_inputs,
             linkopts = linkopts,
             module_map = module_map_file,
+            sdk_dylibs = ctx.attr.sdk_dylibs,
+            sdk_frameworks = ctx.attr.sdk_frameworks,
             static_archives = compact([library_to_link.static_library]),
         )
         providers.append(objc_provider)

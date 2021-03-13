@@ -112,6 +112,8 @@ def new_objc_provider(
         link_inputs,
         linkopts,
         module_map,
+        sdk_dylibs,
+        sdk_frameworks,
         static_archives):
     """Creates an `apple_common.Objc` provider for an Objective-C target.
 
@@ -158,6 +160,16 @@ def new_objc_provider(
         objc_provider_args["linkopt"] = depset(
             direct = linkopts,
             order = "topological",
+        )
+
+    if sdk_dylibs:
+        objc_provider_args["sdk_dylib"] = depset(
+            direct = sdk_dylibs,
+        )
+
+    if sdk_frameworks:
+        objc_provider_args["sdk_framework"] = depset(
+            direct = sdk_frameworks,
         )
 
     force_loaded_libraries = [

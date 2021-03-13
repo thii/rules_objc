@@ -138,6 +138,8 @@ def _apple_static_library_impl(ctx):
         link_inputs = additional_inputs,
         linkopts = linkopts,
         module_map = None,
+        sdk_dylibs = ctx.attr.sdk_dylibs,
+        sdk_frameworks = ctx.attr.sdk_frameworks,
         static_archives = [output],
     )
 
