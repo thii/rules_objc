@@ -1,10 +1,6 @@
 """Implementation of the `objc_library` rule."""
 
 load(
-    "@build_bazel_rules_swift//swift:swift.bzl",
-    "SwiftInfo",
-)
-load(
     "@build_bazel_rules_swift//swift/internal:utils.bzl",
     "compact",
 )
@@ -249,7 +245,6 @@ The list of targets that are linked together to form the final bundle.
 """,
             providers = [
                 [CcInfo],
-                [SwiftInfo],
                 [apple_common.Objc],
             ],
         ),
@@ -293,7 +288,6 @@ expansion and Make variables expansion.
         "private_deps": attr.label_list(
             providers = [
                 [CcInfo],
-                [SwiftInfo],
                 [apple_common.Objc],
             ],
         ),

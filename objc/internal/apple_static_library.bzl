@@ -5,10 +5,6 @@ load(
     "transition_support",
 )
 load(
-    "@build_bazel_rules_swift//swift:swift.bzl",
-    "SwiftInfo",
-)
-load(
     "@rules_cc//cc:action_names.bzl",
     "CPP_LINK_STATIC_LIBRARY_ACTION_NAME",
 )
@@ -179,7 +175,6 @@ and C would have duplicate symbols for C.
 """,
             providers = [
                 [CcInfo],
-                [SwiftInfo],
                 [apple_common.Objc],
             ],
         ),
@@ -197,7 +192,6 @@ The list of targets that are linked together to form the final bundle.
 """,
             providers = [
                 [CcInfo],
-                [SwiftInfo],
                 [apple_common.Objc],
             ],
         ),
