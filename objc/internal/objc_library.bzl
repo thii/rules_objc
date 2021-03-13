@@ -328,7 +328,9 @@ Names of SDK frameworks to weakly link with.
 """,
         ),
         # Remove once https://github.com/bazelbuild/bazel/issues/7260 is flipped
-        "_cc_toolchain": attr.label(default = Label("@bazel_tools//tools/cpp:current_cc_toolchain")),
+        "_cc_toolchain": attr.label(
+            default = "@bazel_tools//tools/cpp:current_cc_toolchain",
+        ),
     },
     fragments = ["apple", "objc", "cpp"],
     toolchains = ["@bazel_tools//tools/cpp:toolchain_type"],

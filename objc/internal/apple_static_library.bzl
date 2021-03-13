@@ -261,14 +261,16 @@ the version of the framework available at runtime.
             default = "@bazel_tools//tools/allowlists/function_transition_allowlist",
         ),
         # Remove once https://github.com/bazelbuild/bazel/issues/7260 is flipped
-        "_cc_toolchain": attr.label(default = Label("@bazel_tools//tools/cpp:current_cc_toolchain")),
+        "_cc_toolchain": attr.label(
+            default = "@bazel_tools//tools/cpp:current_cc_toolchain",
+        ),
         # This is not actually needed because we only use it to execute lipo;
         # we're just using it to keep the command the same with the native
         # `apple_static_library` rule for now.
         "_xcrunwrapper": attr.label(
             cfg = "host",
             executable = True,
-            default = Label("@bazel_tools//tools/objc:xcrunwrapper"),
+            default = "@bazel_tools//tools/objc:xcrunwrapper",
         ),
     },
     cfg = transition_support.apple_rule_transition,
