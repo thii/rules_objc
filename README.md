@@ -45,9 +45,7 @@ from the native rules.
 Special thanks to the following external rules that have heavily inspired the
 implementation of these rules.
 
-- [rules_cc](https://github.com/bazelbuild/rules_cc)'s `my_c_compile` and
-  `my_c_archive` example rules.
-- [rules_swift](https://github.com/bazelbuild/rules_swift)'s `swift_library`
-  rule, as well as other helper components that these rules reuse.
-- [rules_ios](https://github.com/bazel-ios/rules_ios)'s draft implementation of
-  `apple_library_2` rule.
+- [rules_cc](https://github.com/bazelbuild/rules_cc)
+- [rules_apple](https://github.com/bazelbuild/rules_apple)
+- [rules_swift](https://github.com/bazelbuild/rules_swift)
+- [rules_ios](https://github.com/bazel-ios/rules_ios)
