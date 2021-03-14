@@ -71,8 +71,18 @@ def compile(
     args.add("-arch", cpu)
     args.add("-MD")
     args.add("-MF", dependency_file)
-    args.add_all(cc_info.compilation_context.defines, format_each = "-D%s")
-    args.add_all(cc_info.compilation_context.includes, format_each = "-I%s")
+    args.add_all(
+        cc_info.compilation_context.defines,
+        format_each = "-D%s",
+    )
+    args.add_all(
+        cc_info.compilation_context.framework_includes,
+        format_each = "-F%s",
+    )
+    args.add_all(
+        cc_info.compilation_context.includes,
+        format_each = "-I%s",
+    )
 
     if enable_modules:
         args.add("-fmodules")
