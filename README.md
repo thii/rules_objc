@@ -29,14 +29,9 @@ objc_library(
 )
 ```
 
-The rules are expected to be compatible with their native implementation,
-with support for the following extra attributes:
-
- - `private_deps`: Private (implementation-only) dependencies of the target being compiled.
-
-
-See the
-[documentation](https://docs.bazel.build/versions/master/be/objective-c.html#objc_library)
+The rules are expected to be compatible with their native implementation. See
+the
+[documentation](https://docs.bazel.build/versions/master/be/objective-c.html)
 from the native rules.
 
 ## Current status

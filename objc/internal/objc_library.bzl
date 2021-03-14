@@ -204,7 +204,7 @@ def _objc_library_impl(ctx):
         )
 
         objc_provider = new_objc_provider(
-            deps = ctx.attr.deps + ctx.attr.private_deps,
+            deps = ctx.attr.deps,
             link_inputs = [],
             linkopts = linkopts,
             module_map = module_map_file,
@@ -299,12 +299,6 @@ Enables Clang module support (via `-fmodules`).
         ),
         "pch": attr.label(
             allow_single_file = True,
-        ),
-        "private_deps": attr.label_list(
-            providers = [
-                [CcInfo],
-                [apple_common.Objc],
-            ],
         ),
         "runtime_deps": attr.label_list(
             allow_files = True,

@@ -227,8 +227,6 @@ that binary's transitive dependency graph are used.
         ),
         "sdk_frameworks": attr.string_list(
             doc = """\
-Deprecated; use `linkopts` instead.
-
 Names of SDK frameworks to link with (e.g., `AddressBook`, `QuartzCore`).
 `UIKit` and `Foundation` are always included, even if this attribute is
 provided and does not list them.
@@ -236,8 +234,6 @@ provided and does not list them.
         ),
         "weak_sdk_frameworks": attr.string_list(
             doc = """\
-Deprecated; use `linkopts` instead.
-
 Names of SDK frameworks to weakly link with (e.g., `MediaAccessibility`).
 Unlike regularly linked SDK frameworks, symbols from weakly linked
 frameworks do not cause the binary to fail to load if they are not present in
