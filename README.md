@@ -32,8 +32,6 @@ objc_library(
 The rules are expected to be compatible with their native implementation,
 with support for the following extra attributes:
 
- - `cc_inputs`: Additional files to be passed to the compile and linker
-   commands.
  - `linkopts`: Additional linker options.
  - `private_deps`: Private (implementation-only) dependencies of the target being compiled.
 

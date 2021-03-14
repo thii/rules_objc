@@ -30,15 +30,13 @@ load(
 def _apple_static_library_impl(ctx):
     cc_toolchain = find_cc_toolchain(ctx)
 
-    additional_inputs = []
-    additional_inputs.extend(ctx.files.cc_inputs)
+    # Location expansion needs targets, not files.
+    all_inputs = ctx.attr.deps
 
-    # These can't use additional_inputs since expand_locations needs targets,
-    # not files.
     linkopts = expand_locations_and_make_variables(
         attr = "linkopts",
         ctx = ctx,
-        targets = ctx.attr.cc_inputs,
+        targets = all_inputs,
         values = ctx.attr.linkopts,
     ) + [
         linker_flag_for_sdk_dylib(dylib)
@@ -135,7 +133,7 @@ def _apple_static_library_impl(ctx):
 
     objc_provider = new_objc_provider(
         deps = ctx.attr.deps,
-        link_inputs = additional_inputs,
+        link_inputs = [],
         linkopts = linkopts,
         module_map = None,
         sdk_dylibs = ctx.attr.sdk_dylibs,
@@ -179,13 +177,6 @@ and C would have duplicate symbols for C.
                 [CcInfo],
                 [apple_common.Objc],
             ],
-        ),
-        "cc_inputs": attr.label_list(
-            allow_files = True,
-            doc = """\
-Additional files that are referenced using `$(location ...)` in attributes that
-support location and Make variable expansion.
-""",
         ),
         "deps": attr.label_list(
             cfg = apple_common.multi_arch_split,

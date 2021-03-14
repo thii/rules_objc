@@ -81,21 +81,19 @@ def _objc_library_impl(ctx):
     providers = []
 
     if outputs:
-        additional_inputs = []
-        additional_inputs.extend(ctx.files.cc_inputs)
-
-        # These can't use additional_inputs since expand_locations needs
-        # targets, not files.
+        # Location expansion needs targets, not files.
+        all_inputs = ctx.attr.deps + ctx.attr.hdrs + ctx.attr.non_arc_srcs + \
+            ctx.attr.srcs + ctx.attr.textual_hdrs
         copts = expand_locations_and_make_variables(
             attr = "copts",
             ctx = ctx,
-            targets = ctx.attr.cc_inputs,
+            targets = all_inputs,
             values = ctx.attr.copts,
         )
         linkopts = expand_locations_and_make_variables(
             attr = "linkopts",
             ctx = ctx,
-            targets = ctx.attr.cc_inputs,
+            targets = all_inputs,
             values = ctx.attr.linkopts,
         ) + [
             linker_flag_for_sdk_dylib(dylib)
@@ -120,7 +118,7 @@ def _objc_library_impl(ctx):
         object_files = []
 
         compilation_extra_inputs = []
-        compilation_extra_inputs.extend(additional_inputs + ctx.files.hdrs)
+        compilation_extra_inputs.extend(ctx.files.hdrs)
         for file in ctx.files.srcs:
             _, extension = paths.split_extension(file.path)
             if extension in HEADERS_FILE_TYPES:
@@ -142,7 +140,6 @@ def _objc_library_impl(ctx):
             static_library = output_file,
         )
         linker_input = cc_common.create_linker_input(
-            additional_inputs = depset(additional_inputs),
             libraries = depset([library_to_link]),
             owner = ctx.label,
             user_link_flags = depset(linkopts),
@@ -213,7 +210,7 @@ def _objc_library_impl(ctx):
 
         objc_provider = new_objc_provider(
             deps = ctx.attr.deps + ctx.attr.private_deps,
-            link_inputs = additional_inputs,
+            link_inputs = [],
             linkopts = linkopts,
             module_map = module_map_file,
             sdk_dylibs = ctx.attr.sdk_dylibs,
@@ -254,13 +251,6 @@ def _objc_library_impl(ctx):
 objc_library = rule(
     implementation = _objc_library_impl,
     attrs = {
-        "cc_inputs": attr.label_list(
-            allow_files = True,
-            doc = """\
-Additional files that are referenced using `$(location ...)` in attributes that
-support location and Make variables expansion.
-""",
-        ),
         "copts": attr.string_list(
             doc = """\
 Additional compiler options that should be passed to the C compiler. These

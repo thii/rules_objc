@@ -24,12 +24,13 @@ load(
 def _objc_import_impl(ctx):
     cc_toolchain = find_cc_toolchain(ctx)
 
-    # These can't use ctx.files.cc_inputs since expand_locations needs targets,
-    # not files.
+    # Location expansion needs targets, not files.
+    all_inputs = ctx.attr.archives + ctx.attr.hdrs + ctx.attr.textual_hdrs
+
     linkopts = expand_locations_and_make_variables(
         attr = "linkopts",
         ctx = ctx,
-        targets = ctx.attr.cc_inputs,
+        targets = all_inputs,
         values = ctx.attr.linkopts,
     ) + [
         linker_flag_for_sdk_dylib(dylib)
@@ -66,7 +67,6 @@ def _objc_import_impl(ctx):
             static_library = archive,
         )
         linker_input = cc_common.create_linker_input(
-            additional_inputs = depset(ctx.files.cc_inputs),
             libraries = depset([library_to_link]),
             owner = ctx.label,
             user_link_flags = depset(linkopts),
@@ -114,13 +114,6 @@ your code registers to receive some callback provided by some service.
             doc = """\
 The list of `.a` files provided to Objective-C targets that depend on this
 target.
-""",
-        ),
-        "cc_inputs": attr.label_list(
-            allow_files = True,
-            doc = """\
-Additional files that are referenced using `$(location ...)` in attributes that
-support location and Make variables expansion.
 """,
         ),
         "hdrs": attr.label_list(
