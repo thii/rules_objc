@@ -54,8 +54,8 @@ def _objc_import_impl(ctx):
         includes = depset(ctx.attr.includes),
     )
 
-    this_cc_info = CcInfo(compilation_context = compilation_context)
-    cc_infos = [this_cc_info]
+    direct_cc_info = CcInfo(compilation_context = compilation_context)
+    cc_infos = []
 
     for archive in ctx.files.archives:
         library_to_link = cc_common.create_library_to_link(
@@ -77,7 +77,10 @@ def _objc_import_impl(ctx):
         cc_info = CcInfo(linking_context = linking_context)
         cc_infos.append(cc_info)
 
-    cc_info = cc_common.merge_cc_infos(cc_infos = cc_infos)
+    cc_info = cc_common.merge_cc_infos(
+        cc_infos = cc_infos,
+        direct_cc_infos = [direct_cc_info],
+    )
 
     objc_provider = new_objc_provider(
         deps = [],

@@ -160,6 +160,7 @@ def _objc_library_impl(ctx):
             cc_infos = [
                 dep[CcInfo]
                 for dep in ctx.attr.deps
+                if CcInfo in dep
             ],
         )
 
@@ -229,6 +230,7 @@ def _objc_library_impl(ctx):
             cc_infos = [
                 dep[CcInfo]
                 for dep in ctx.attr.deps
+                if CcInfo in dep
             ],
         )
 
