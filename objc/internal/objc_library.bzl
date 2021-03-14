@@ -57,11 +57,12 @@ def _objc_library_impl(ctx):
         module_map_file = ctx.actions.declare_file(
             ctx.label.name + ".objc.modulemap",
         )
+        module_name = ctx.attr.module_name or derive_module_name(ctx.label)
         write_module_map(
             actions = ctx.actions,
             exported_module_ids = ["*"],
             module_map_file = module_map_file,
-            module_name = derive_module_name(ctx.label),
+            module_name = module_name,
             public_headers = ctx.files.hdrs,
             public_textual_headers = ctx.files.textual_hdrs,
         )
@@ -296,6 +297,13 @@ Enables Clang module support (via `-fmodules`).
         ),
         "module_map": attr.label(
             allow_single_file = True,
+        ),
+        "module_name": attr.string(
+            doc = """\
+Sets the module name for this target. By default the module name is the target
+path with all special symbols replaced by `_`, e.g. `//foo/baz:bar` can be
+imported as `foo_baz_bar`.
+""",
         ),
         "non_arc_srcs": attr.label_list(
             allow_files = OBJC_FILE_TYPES,
