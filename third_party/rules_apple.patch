@@ -1,0 +1,81 @@
+diff --git c/apple/ios.bzl i/apple/ios.bzl
+index eee6c74..20739de 100644
+--- c/apple/ios.bzl
++++ i/apple/ios.bzl
+@@ -49,6 +49,7 @@ load(
+     _ios_static_framework = "ios_static_framework",
+     _ios_sticker_pack_extension = "ios_sticker_pack_extension",
+ )
++load("@//objc:objc.bzl", "apple_static_library")
+ 
+ def ios_application(name, **kwargs):
+     """Builds and bundles an iOS application."""
+@@ -165,7 +166,7 @@ def ios_static_framework(name, **kwargs):
+     deps = kwargs.get("deps")
+     apple_static_library_name = "%s.apple_static_library" % name
+ 
+-    native.apple_static_library(
++    apple_static_library(
+         name = apple_static_library_name,
+         deps = deps,
+         avoid_deps = avoid_deps,
+diff --git c/test/starlark_tests/resources/BUILD i/test/starlark_tests/resources/BUILD
+index 1515dd5..ee684c5 100644
+--- c/test/starlark_tests/resources/BUILD
++++ i/test/starlark_tests/resources/BUILD
+@@ -1,4 +1,4 @@
+-load("@rules_cc//cc:defs.bzl", "objc_library")
++load("@//objc:objc.bzl", "objc_library")
+ load(
+     "//apple:resources.bzl",
+     "apple_bundle_import",
+diff --git c/test/starlark_tests/targets_under_test/ios/BUILD i/test/starlark_tests/targets_under_test/ios/BUILD
+index af25a4e..d268862 100644
+--- c/test/starlark_tests/targets_under_test/ios/BUILD
++++ i/test/starlark_tests/targets_under_test/ios/BUILD
+@@ -1,4 +1,4 @@
+-load("@rules_cc//cc:defs.bzl", "objc_library")
++load("@//objc:objc.bzl", "objc_library")
+ load(
+     "//apple:ios.bzl",
+     "ios_app_clip",
+diff --git c/test/starlark_tests/targets_under_test/macos/BUILD i/test/starlark_tests/targets_under_test/macos/BUILD
+index a36a93a..83898cb 100644
+--- c/test/starlark_tests/targets_under_test/macos/BUILD
++++ i/test/starlark_tests/targets_under_test/macos/BUILD
+@@ -1,4 +1,4 @@
+-load("@rules_cc//cc:defs.bzl", "objc_library")
++load("@//objc:objc.bzl", "objc_library")
+ load(
+     "//apple:macos.bzl",
+     "macos_application",
+diff --git c/test/starlark_tests/targets_under_test/tvos/BUILD i/test/starlark_tests/targets_under_test/tvos/BUILD
+index 50ba344..a633d6a 100644
+--- c/test/starlark_tests/targets_under_test/tvos/BUILD
++++ i/test/starlark_tests/targets_under_test/tvos/BUILD
+@@ -1,4 +1,4 @@
+-load("@rules_cc//cc:defs.bzl", "objc_library")
++load("@//objc:objc.bzl", "objc_library")
+ load(
+     "//apple:tvos.bzl",
+     "tvos_application",
+diff --git c/test/starlark_tests/targets_under_test/watchos/BUILD i/test/starlark_tests/targets_under_test/watchos/BUILD
+index 582bb89..d18e7b3 100644
+--- c/test/starlark_tests/targets_under_test/watchos/BUILD
++++ i/test/starlark_tests/targets_under_test/watchos/BUILD
+@@ -1,4 +1,4 @@
+-load("@rules_cc//cc:defs.bzl", "objc_library")
++load("@//objc:objc.bzl", "objc_library")
+ load(
+     "//apple:ios.bzl",
+     "ios_application",
+diff --git c/test/testdata/binaries/BUILD i/test/testdata/binaries/BUILD
+index 79d95e6..902ced2 100644
+--- c/test/testdata/binaries/BUILD
++++ i/test/testdata/binaries/BUILD
+@@ -1,4 +1,4 @@
+-load("@rules_cc//cc:defs.bzl", "objc_library")
++load("@//objc:objc.bzl", "objc_library")
+ load(
+     "//apple:apple_binary.bzl",
+     "apple_binary",

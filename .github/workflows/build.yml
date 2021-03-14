@@ -15,3 +15,5 @@ jobs:
       - run: sudo xcode-select -s /Applications/Xcode_12.4.app
       - name: Test
         run: bazelisk test //test/...
+      - name: Run rules_apple Tests
+        run: test/run_rules_apple_tests.sh
