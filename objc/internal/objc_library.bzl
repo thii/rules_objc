@@ -90,12 +90,7 @@ def _objc_library_impl(ctx):
             targets = all_inputs,
             values = ctx.attr.copts,
         )
-        linkopts = expand_locations_and_make_variables(
-            attr = "linkopts",
-            ctx = ctx,
-            targets = all_inputs,
-            values = ctx.attr.linkopts,
-        ) + [
+        linkopts = [
             linker_flag_for_sdk_dylib(dylib)
             for dylib in ctx.attr.sdk_dylibs
         ] + [
@@ -296,13 +291,6 @@ Enables Clang module support (via `-fmodules`).
             doc = """\
 """,
         ),
-        "linkopts": attr.string_list(
-            doc = """\
-Additional linker options that should be passed to the linker for the binary
-that depends on this target. These strings are subject to `$(location ...)`
-expansion and Make variables expansion.
-""",
-        ),
         "module_map": attr.label(
             allow_single_file = True,
         ),
@@ -330,8 +318,6 @@ The list of files needed by this target at runtime.
         ),
         "sdk_frameworks": attr.string_list(
             doc = """\
-Deprecated; use `linkopts` instead.
-
 Names of SDK frameworks to link with.
 """,
         ),
@@ -343,8 +329,6 @@ Names of SDK frameworks to link with.
         ),
         "weak_sdk_frameworks": attr.string_list(
             doc = """\
-Deprecated; use `linkopts` instead.
-
 Names of SDK frameworks to weakly link with.
 """,
         ),

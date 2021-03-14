@@ -24,15 +24,7 @@ load(
 def _objc_import_impl(ctx):
     cc_toolchain = find_cc_toolchain(ctx)
 
-    # Location expansion needs targets, not files.
-    all_inputs = ctx.attr.archives + ctx.attr.hdrs + ctx.attr.textual_hdrs
-
-    linkopts = expand_locations_and_make_variables(
-        attr = "linkopts",
-        ctx = ctx,
-        targets = all_inputs,
-        values = ctx.attr.linkopts,
-    ) + [
+    linkopts = [
         linker_flag_for_sdk_dylib(dylib)
         for dylib in ctx.attr.sdk_dylibs
     ] + [
@@ -141,13 +133,6 @@ The paths are interpreted relative to the package directory, and the bin roots
 root.
 """,
         ),
-        "linkopts": attr.string_list(
-            doc = """\
-Additional linker options that should be passed to the linker for the binary
-that depends on this target. These strings are subject to `$(location ...)`
-expansion and Make variables expansion.
-""",
-        ),
         "sdk_dylibs": attr.string_list(
             doc = """
 Names of SDK `.dylib` libraries to link with (e.g., `libz` or `libarchive`).
@@ -155,8 +140,6 @@ Names of SDK `.dylib` libraries to link with (e.g., `libz` or `libarchive`).
         ),
         "sdk_frameworks": attr.string_list(
             doc = """\
-Deprecated; use `linkopts` instead.
-
 Names of SDK frameworks to link with.
 """,
         ),
@@ -170,8 +153,6 @@ headers by source files in this rule or by users of this library. Unlike
         ),
         "weak_sdk_frameworks": attr.string_list(
             doc = """\
-Deprecated; use `linkopts` instead.
-
 Names of SDK frameworks to weakly link with.
 """,
         ),

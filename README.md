@@ -32,7 +32,6 @@ objc_library(
 The rules are expected to be compatible with their native implementation,
 with support for the following extra attributes:
 
- - `linkopts`: Additional linker options.
  - `private_deps`: Private (implementation-only) dependencies of the target being compiled.
 
 
