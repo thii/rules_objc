@@ -1,15 +1,15 @@
 diff --git c/apple/ios.bzl i/apple/ios.bzl
-index eee6c74..20739de 100644
+index eee6c74..96777ee 100644
 --- c/apple/ios.bzl
 +++ i/apple/ios.bzl
-@@ -49,6 +49,7 @@ load(
-     _ios_static_framework = "ios_static_framework",
-     _ios_sticker_pack_extension = "ios_sticker_pack_extension",
- )
-+load("@//objc:objc.bzl", "apple_static_library")
+@@ -14,6 +14,7 @@
  
- def ios_application(name, **kwargs):
-     """Builds and bundles an iOS application."""
+ """Bazel rules for creating iOS applications and bundles."""
+ 
++load("@//objc:objc.bzl", "apple_static_library")
+ load(
+     "@build_bazel_rules_apple//apple/internal/testing:apple_test_assembler.bzl",
+     "apple_test_assembler",
 @@ -165,7 +166,7 @@ def ios_static_framework(name, **kwargs):
      deps = kwargs.get("deps")
      apple_static_library_name = "%s.apple_static_library" % name
@@ -19,8 +19,50 @@ index eee6c74..20739de 100644
          name = apple_static_library_name,
          deps = deps,
          avoid_deps = avoid_deps,
+diff --git c/apple/tvos.bzl i/apple/tvos.bzl
+index a2d0b34..9bf39be 100644
+--- c/apple/tvos.bzl
++++ i/apple/tvos.bzl
+@@ -14,6 +14,7 @@
+ 
+ """Bazel rules for creating tvOS applications and bundles."""
+ 
++load("@//objc:objc.bzl", "apple_static_library")
+ load(
+     "@build_bazel_rules_apple//apple/internal/testing:apple_test_assembler.bzl",
+     "apple_test_assembler",
+@@ -113,7 +114,7 @@ def tvos_static_framework(name, **kwargs):
+     deps = kwargs.get("deps")
+     apple_static_library_name = "%s.apple_static_library" % name
+ 
+-    native.apple_static_library(
++    apple_static_library(
+         name = apple_static_library_name,
+         deps = deps,
+         avoid_deps = avoid_deps,
+diff --git c/apple/watchos.bzl i/apple/watchos.bzl
+index 34ba804..1249d6a 100644
+--- c/apple/watchos.bzl
++++ i/apple/watchos.bzl
+@@ -14,6 +14,7 @@
+ 
+ """Bazel rules for creating watchOS applications and bundles."""
+ 
++load("@//objc:objc.bzl", "apple_static_library")
+ load(
+     "@build_bazel_rules_apple//apple/internal/testing:build_test_rules.bzl",
+     "apple_build_test_rule",
+@@ -126,7 +127,7 @@ def watchos_static_framework(name, **kwargs):
+     deps = kwargs.get("deps")
+     apple_static_library_name = "%s.apple_static_library" % name
+ 
+-    native.apple_static_library(
++    apple_static_library(
+         name = apple_static_library_name,
+         deps = deps,
+         avoid_deps = avoid_deps,
 diff --git c/test/starlark_tests/resources/BUILD i/test/starlark_tests/resources/BUILD
-index 1515dd5..ee684c5 100644
+index 1515dd5..ef0ac8b 100644
 --- c/test/starlark_tests/resources/BUILD
 +++ i/test/starlark_tests/resources/BUILD
 @@ -1,4 +1,4 @@
@@ -30,7 +72,7 @@ index 1515dd5..ee684c5 100644
      "//apple:resources.bzl",
      "apple_bundle_import",
 diff --git c/test/starlark_tests/targets_under_test/ios/BUILD i/test/starlark_tests/targets_under_test/ios/BUILD
-index af25a4e..d268862 100644
+index af25a4e..bb84084 100644
 --- c/test/starlark_tests/targets_under_test/ios/BUILD
 +++ i/test/starlark_tests/targets_under_test/ios/BUILD
 @@ -1,4 +1,4 @@
@@ -40,7 +82,7 @@ index af25a4e..d268862 100644
      "//apple:ios.bzl",
      "ios_app_clip",
 diff --git c/test/starlark_tests/targets_under_test/macos/BUILD i/test/starlark_tests/targets_under_test/macos/BUILD
-index a36a93a..83898cb 100644
+index a36a93a..6cf6acb 100644
 --- c/test/starlark_tests/targets_under_test/macos/BUILD
 +++ i/test/starlark_tests/targets_under_test/macos/BUILD
 @@ -1,4 +1,4 @@
@@ -50,7 +92,7 @@ index a36a93a..83898cb 100644
      "//apple:macos.bzl",
      "macos_application",
 diff --git c/test/starlark_tests/targets_under_test/tvos/BUILD i/test/starlark_tests/targets_under_test/tvos/BUILD
-index 50ba344..a633d6a 100644
+index 50ba344..1cd86e1 100644
 --- c/test/starlark_tests/targets_under_test/tvos/BUILD
 +++ i/test/starlark_tests/targets_under_test/tvos/BUILD
 @@ -1,4 +1,4 @@
@@ -60,7 +102,7 @@ index 50ba344..a633d6a 100644
      "//apple:tvos.bzl",
      "tvos_application",
 diff --git c/test/starlark_tests/targets_under_test/watchos/BUILD i/test/starlark_tests/targets_under_test/watchos/BUILD
-index 582bb89..d18e7b3 100644
+index 582bb89..be2da5b 100644
 --- c/test/starlark_tests/targets_under_test/watchos/BUILD
 +++ i/test/starlark_tests/targets_under_test/watchos/BUILD
 @@ -1,4 +1,4 @@
@@ -70,12 +112,12 @@ index 582bb89..d18e7b3 100644
      "//apple:ios.bzl",
      "ios_application",
 diff --git c/test/testdata/binaries/BUILD i/test/testdata/binaries/BUILD
-index 79d95e6..902ced2 100644
+index 79d95e6..1c2a85b 100644
 --- c/test/testdata/binaries/BUILD
 +++ i/test/testdata/binaries/BUILD
 @@ -1,4 +1,4 @@
 -load("@rules_cc//cc:defs.bzl", "objc_library")
-+load("@//objc:objc.bzl", "objc_library")
++load("@//objc:objc.bzl", "apple_static_library", "objc_library")
  load(
      "//apple:apple_binary.bzl",
      "apple_binary",
