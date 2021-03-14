@@ -2,17 +2,18 @@
 
 load(
     "@build_bazel_rules_swift//swift/internal:compiling.bzl",
-    "derive_module_name"
+    "derive_module_name",
 )
 load(
     "@build_bazel_rules_swift//swift/internal:module_maps.bzl",
-    "write_module_map"
+    "write_module_map",
 )
 load(
     "@build_bazel_rules_swift//swift/internal:utils.bzl",
     "compact",
 )
 load("@bazel_skylib//lib:paths.bzl", "paths")
+load("@bazel_skylib//lib:sets.bzl", "sets")
 load(
     "@rules_cc//cc:find_cc_toolchain.bzl",
     "find_cc_toolchain",
@@ -82,8 +83,10 @@ def _objc_library_impl(ctx):
 
     if outputs:
         # Location expansion needs targets, not files.
-        all_inputs = ctx.attr.deps + ctx.attr.hdrs + ctx.attr.non_arc_srcs + \
-            ctx.attr.srcs + ctx.attr.textual_hdrs
+        all_inputs = sets.to_list(sets.make(
+            ctx.attr.deps + ctx.attr.hdrs + ctx.attr.non_arc_srcs +
+            ctx.attr.srcs + ctx.attr.textual_hdrs,
+        ))
         copts = expand_locations_and_make_variables(
             attr = "copts",
             ctx = ctx,

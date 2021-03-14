@@ -1,3 +1,4 @@
+load("@rules_cc//cc:defs.bzl", "objc_library")
 load(
     "//objc:objc.bzl",
     starlark_apple_static_library = "apple_static_library",
@@ -66,14 +67,14 @@ genrule(
 
 objc_library(
     name = "objclib",
-    hdrs = [":objc_hdr"],
     srcs = ["@bazel_tools//tools/objc:dummy.c"],
+    hdrs = [":objc_hdr"],
 )
 
 starlark_objc_library(
     name = "starlark_objclib",
-    hdrs = [":objc_hdr"],
     srcs = ["@bazel_tools//tools/objc:dummy.c"],
+    hdrs = [":objc_hdr"],
 )
 
 genrule(

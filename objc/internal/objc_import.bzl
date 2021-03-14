@@ -16,10 +16,6 @@ load(
     ":linking.bzl",
     "linker_flag_for_sdk_dylib",
 )
-load(
-    ":utils.bzl",
-    "expand_locations_and_make_variables",
-)
 
 def _objc_import_impl(ctx):
     cc_toolchain = find_cc_toolchain(ctx)
