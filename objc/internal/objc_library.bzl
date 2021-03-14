@@ -74,7 +74,13 @@ def _objc_library_impl(ctx):
         quote_includes = depset([".", ctx.bin_dir.path]),
     )
 
-    if ctx.files.srcs or ctx.files.non_arc_srcs:
+    compilable_srcs = []
+    for file in ctx.files.srcs + ctx.files.non_arc_srcs:
+        _, extension = paths.split_extension(file.path)
+        if extension not in HEADERS_FILE_TYPES:
+            compilable_srcs.append(file)
+
+    if compilable_srcs:
         output_file = ctx.actions.declare_file("lib" + ctx.label.name + ".a")
         outputs = [output_file]
     else:
