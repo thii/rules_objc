@@ -249,9 +249,6 @@ def _objc_library_impl(ctx):
             ],
         )
 
-    if module_map_file:
-        outputs.append(module_map_file)
-
     providers.extend([
         cc_info,
         objc_provider,
