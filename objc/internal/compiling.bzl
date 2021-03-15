@@ -6,7 +6,10 @@ load(
     "get_providers",
 )
 load(
-    "@rules_cc//cc:action_names.bzl",
+    "@bazel_tools//tools/build_defs/cc:action_names.bzl",
+    "CPP_COMPILE_ACTION_NAME",
+    "C_COMPILE_ACTION_NAME",
+    "OBJCPP_COMPILE_ACTION_NAME",
     "OBJC_COMPILE_ACTION_NAME",
 )
 load(
@@ -14,6 +17,17 @@ load(
     "intermediate_dependency_file",
     "intermediate_object_file",
 )
+
+def _compile_action_name_for_file(src):
+    extension = src.extension
+    if extension in ["c"]:
+        return C_COMPILE_ACTION_NAME
+    elif extension in ["cc", "cpp", "cxx", "C"]:
+        return CPP_COMPILE_ACTION_NAME
+    elif extension in ["mm"]:
+        return OBJCPP_COMPILE_ACTION_NAME
+    else:
+        return OBJC_COMPILE_ACTION_NAME
 
 def compile(
         additional_inputs,
@@ -38,8 +52,9 @@ def compile(
         target_name = ctx.label.name,
     )
 
+    compile_action_name = _compile_action_name_for_file(src)
     c_compiler_path = cc_common.get_tool_for_action(
-        action_name = OBJC_COMPILE_ACTION_NAME,
+        action_name = compile_action_name,
         feature_configuration = feature_configuration,
     )
     c_compile_variables = cc_common.create_compile_variables(
@@ -51,18 +66,18 @@ def compile(
         user_compile_flags = ctx.fragments.cpp.copts + ctx.fragments.cpp.conlyopts + copts,
     )
     command_line = cc_common.get_memory_inefficient_command_line(
-        action_name = OBJC_COMPILE_ACTION_NAME,
+        action_name = compile_action_name,
         feature_configuration = feature_configuration,
         variables = c_compile_variables,
     )
     env = cc_common.get_environment_variables(
-        action_name = OBJC_COMPILE_ACTION_NAME,
+        action_name = compile_action_name,
         feature_configuration = feature_configuration,
         variables = c_compile_variables,
     )
 
     execution_requirements_list = cc_common.get_execution_requirements(
-        action_name = OBJC_COMPILE_ACTION_NAME,
+        action_name = compile_action_name,
         feature_configuration = feature_configuration,
     )
     execution_requirements = {req: "1" for req in execution_requirements_list}
