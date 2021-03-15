@@ -69,10 +69,10 @@ def _objc_library_impl(ctx):
 
     compilation_context = cc_common.create_compilation_context(
         defines = depset(ctx.attr.defines + [
-            # TODO: Pass via a feature
-            "__DATE__=\"redacted\"",
-            "__TIMESTAMP__=\"redacted\"",
-            "__TIME__=\"redacted\"",
+            # # TODO: Pass via a feature
+            # "__DATE__=\"redacted\"",
+            # "__TIMESTAMP__=\"redacted\"",
+            # "__TIME__=\"redacted\"",
         ]),
         headers = depset(ctx.files.hdrs),
         includes = depset(ctx.attr.includes),
