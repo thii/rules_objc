@@ -207,15 +207,7 @@ def new_objc_provider(
             direct = force_loaded_libraries,
         )
 
-    transitive_objc_provider_args = {"providers": objc_providers}
     if module_map:
-        transitive_objc_provider_args["module_map"] = depset(
-            direct = [module_map],
-        )
-
-    transitive_objc = apple_common.new_objc_provider(
-        **transitive_objc_provider_args
-    )
-    objc_provider_args["module_map"] = transitive_objc.module_map
+        objc_provider_args["module_map"] = depset(direct = [module_map])
 
     return apple_common.new_objc_provider(**objc_provider_args)
