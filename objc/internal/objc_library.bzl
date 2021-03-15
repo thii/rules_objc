@@ -227,8 +227,16 @@ def _objc_library_impl(ctx):
             sdk_frameworks = ctx.attr.sdk_frameworks,
             static_archives = compact([library_to_link.static_library]),
         )
-        providers.append(objc_provider)
     else:
+        objc_provider = new_objc_provider(
+            deps = ctx.attr.deps,
+            link_inputs = [],
+            linkopts = [],
+            module_map = module_map_file,
+            sdk_dylibs = ctx.attr.sdk_dylibs,
+            sdk_frameworks = ctx.attr.sdk_frameworks,
+            static_archives = [],
+        )
         direct_cc_info = CcInfo(
             compilation_context = compilation_context,
         )
@@ -246,6 +254,7 @@ def _objc_library_impl(ctx):
 
     providers.extend([
         cc_info,
+        objc_provider,
         DefaultInfo(
             files = depset(outputs),
             runfiles = ctx.runfiles(
