@@ -4,8 +4,9 @@ http_archive(
     name = "build_bazel_rules_apple",
     patch_args = ["-p1"],
     patches = ["//third_party:rules_apple.patch"],
-    sha256 = "09423d57ace0fca1b84e19326dc9aadd42f2be52f1b5a15bc652d18c2c1dee71",
-    url = "https://github.com/bazelbuild/rules_apple/releases/download/0.30.0/rules_apple.0.30.0.tar.gz",
+    sha256 = "d46c999340c46dea461bd4ab3e2ad8ec0b5b9960b62bf8a6a69a995ffa64edde",
+    strip_prefix = "rules_apple-29d2caf5bc1a81c952126fa2efe82a0242bb3697",
+    url = "https://github.com/bazelbuild/rules_apple/archive/29d2caf5bc1a81c952126fa2efe82a0242bb3697.tar.gz",
 )
 
 load(
