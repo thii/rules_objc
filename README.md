@@ -37,15 +37,15 @@ from the native rules.
 ## Current status
 
 - Implemented: `apple_static_library`, `objc_import`, and `objc_library`.
-- Be able to build all Objective-C examples in `rules_apple`.
 - Passes [all `rules_apple`'s analysis tests](test/run_rules_apple_tests.sh).
+- Be able to build a non-trivial iOS app.
 
 ## Acknowledgments
 
 Special thanks to the following external rules that have heavily inspired the
-implementation of these rules.
+implementation of these rules (sorted alphabetically).
 
-- [rules_cc](https://github.com/bazelbuild/rules_cc)
 - [rules_apple](https://github.com/bazelbuild/rules_apple)
-- [rules_swift](https://github.com/bazelbuild/rules_swift)
+- [rules_cc](https://github.com/bazelbuild/rules_cc)
 - [rules_ios](https://github.com/bazel-ios/rules_ios)
+- [rules_swift](https://github.com/bazelbuild/rules_swift)
