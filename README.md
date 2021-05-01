@@ -1,3 +1,5 @@
+This repository is deprecated. Native Objective-C rules have already been migrated to Starlark in Bazel core.
+
 # Starlark Objective-C rules for Bazel ![](https://github.com/thii/rules_objc/workflows/build/badge.svg)
 
 This repository contains an experimental Starlark implementation of Objective-C
